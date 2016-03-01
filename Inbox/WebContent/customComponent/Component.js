@@ -1,5 +1,5 @@
 jQuery.sap.require("sap.ui.core.UIComponent");
-jQuery.sap.require("sap.m.Button");
+jQuery.sap.require("sap.m.MessageBox");
 
 jQuery.sap.declare("incture.bpmInbox.customComponent.Component");
 
@@ -71,9 +71,11 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
 					tooltip : undefined, 
 					search : [ function(oEvent) {
 						var control = oEvent.getSource();
+						that.searchTable(oEvent);
 					}, this ],
 					liveChange : [ function(oEvent) {
 						var control = oEvent.getSource();
+						//
 					}, this ]
 				}).addStyleClass("search-height")
 		           ]
@@ -91,19 +93,45 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
 	this.headerToolBar.addStyleClass("whiteBG");
 	
 	this.columnListItem = new sap.m.ColumnListItem({
-    	cells:[]
-    		});
+    	cells:[],
+    	type:sap.m.ListType.Active,
+    	press: function(oEvent){
+    		that.activeItem = oEvent.getSource().getBindingContextPath("bpmModel").split("/")[3];
+    		if(that.activeItem){
+    			var btns= that.headerToolBar.getContent();
+    			for(var i=0;i<btns.length;i++){
+    				if(btns[i].getMetadata()._sClassName === "sap.m.Button"){
+    					btns[i].setEnabled(true);
+    				}
+    			}
+    		}else{
+    			var btns= that.headerToolBar.getContent();
+    			for(var i=0;i<btns.length;i++){
+    				if(btns[i].getMetadata()._sClassName === "sap.m.Button"){
+    					btns[i].setEnabled(false);
+    				}
+    			}
+    		}
+    	}
+    });
 	
 	this.oTable = new sap.m.Table({
 		headerToolbar: this.headerToolBar,
 		items : [], 
 		columns : [],
 		growing: true,
-		growingThreshold: 5,
+		growingThreshold: 10,
 		updateFinished: function(oEvent){
 			var control= oEvent.getSource();
 			var id= control.getId();
 			$("#"+id).find("th").addClass("header");
+		},
+		itemPress: function(oEvent){
+			//debugger;
+		},
+		selectionChange: function(oEvent){
+			//debugger;
+			
 		}
 	});
 	
@@ -138,6 +166,7 @@ incture.bpmInbox.customComponent.Component.prototype.setTableButtonNames = funct
 };
 
 incture.bpmInbox.customComponent.Component.prototype.setTableButtons = function(oButtons){
+	var that=this;
 	var nameArr = oButtons.split(",");
 	
 	if(this.getProperty("tableButtonAlign") !== "left"){
@@ -147,11 +176,23 @@ incture.bpmInbox.customComponent.Component.prototype.setTableButtons = function(
 	for(var i=0;i< nameArr.length; i++){
 		var aIcon = this.getButtonIcon(nameArr[i]);
 		var aButton= new sap.m.Button({
+			enabled: false,
 			icon: aIcon,
 			text: nameArr[i],
 			press: function(oEvent){
 				var control= oEvent.getSource();
-				console.log(control);
+				if(control.getIcon().split("/")[2]){
+					switch(control.getIcon().split("/")[2]){
+					case "locked": that.claim(oEvent);
+					break;
+					case "open-folder": that.open(oEvent);
+					break;
+					case "unlocked": that.release(oEvent);
+					break;
+					case "forward": that.forward(oEvent);
+					break;
+					}
+				}
 			}
 		});
 		this.headerToolBar.addContent(aButton);
@@ -208,7 +249,6 @@ incture.bpmInbox.customComponent.Component.prototype.setFilterLists = function(f
 };
 
 incture.bpmInbox.customComponent.Component.prototype.openFilters = function(oEvent){
-	debugger;
 	var that=this;
 	if(!this._filterPopUp){
 		var filters = this.getProperty("filterList");
@@ -268,12 +308,12 @@ incture.bpmInbox.customComponent.Component.prototype.openFilters = function(oEve
 
 incture.bpmInbox.customComponent.Component.prototype.getFilterButtons = function(filter){
 	var btnList= [];
+	var that=this;
 	switch(filter){
 	case "Task Type": btnList.push(new sap.m.RadioButton({
 					  	  text:"One Task",
 						  selected:false,
 						  select: function(oEvent){
-							  debugger;
 							 
 						  }
 					  }));
@@ -281,7 +321,6 @@ incture.bpmInbox.customComponent.Component.prototype.getFilterButtons = function
 						  text:"Employee Task",
 						  selected:false,
 						  select: function(oEvent){
-							  debugger;
 						  }
 					  }));
 					  break;
@@ -418,9 +457,58 @@ incture.bpmInbox.customComponent.Component.prototype.getCellControl = function(c
 	return returnControl;
 };
 
+incture.bpmInbox.customComponent.Component.prototype.searchTable = function(oEvent){
+	var searchValue = oEvent.getSource().getValue();
+	searchValue= searchValue.toLowerCase();
+	
+	
+	var items= this.oTable.getItems();
+	var v;
+	var count=0;
+	var g=null;
+	var C=0;
+	for(var i=0;i< items.length; i++){
+		if(items[i] instanceof sap.m.GroupHeaderListItem){
+			
+		}else{
+			v= this.applySearchPatternToListItem(items[i], searchValue);
+			items[i].setVisible(v);
+			if(v){
+				count++;
+				C++;
+			}
+		}
+	}
+	if(g){
+		if(C == 0){
+			g.setVisible(false);
+		}else{
+			g.setVisible(true);
+			g.setCount(C);
+		}
+	}
+	return count;
+};
+
+incture.bpmInbox.customComponent.Component.prototype.applySearchPatternToListItem = function(i, searchValue){
+	if(searchValue === ""){
+		return true;
+	}
+	var property= this.oTable.getModel("bpmModel").getData().d.results[i.getBindingContextPath().split("/")[3]];
+	for(var k in property){
+		var v= property[k];
+		if(typeof v === "string"){
+			if(v.toLowerCase().indexOf(searchValue) !== -1){
+				return true;
+			}
+		}
+	}
+	return false;
+};
+
 incture.bpmInbox.customComponent.Component.prototype.getAllBPMTasks = function(){
 	var typeOfTask="ne";
-	var url="http://192.168.1.149:50000/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=Status eq 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
+	var url="http://192.168.1.149:50000/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=Status ne 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
 	var method="GET";
 	var oParam=null;
 	
@@ -431,14 +519,102 @@ incture.bpmInbox.customComponent.Component.prototype.makeSapCall = function(url,
 	var oHeader={"Content-Type":"application/json; charset=utf-8"};
 	
 	var oModel = new sap.ui.model.json.JSONModel(); 
-    //oModel.loadData(url, JSON.stringify(oParam), false,method,false,false,oHeader);
+    oModel.loadData(url, JSON.stringify(oParam), false,method,false,false,oHeader);
      oModel.attachRequestCompleted(function(){
+    	 debugger
      });
      if(oModel.getData() && Object.keys(oModel.getData()).length){
         return oModel;
      }else{
      	return ;
      }
+};
+
+incture.bpmInbox.customComponent.Component.prototype.claim = function(oEvent){
+	var task = this.oTable.getModel("bpmModel").getData().d.results[this.activeItem];
+	var that=this;
+	sap.m.MessageBox.confirm("Do you want to claim '"+task.TaskTitle+"'",{
+		icon: sap.m.MessageBox.Icon.INFORMATION,
+        title: "Information",
+        actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
+        onClose: function(oAction) {
+        	debugger;
+        	if(oAction === "OK"){
+        		var url= "http://192.168.1.149:50000/bpmodata/tasks.svc/Claim?InstanceID='"+task.InstanceID+"'&$format=json"
+        		that.makeSapCall(url,"POST",null);
+        	}
+        	var btns= that.headerToolBar.getContent();
+			for(var i=0;i<btns.length;i++){
+				if(btns[i].getMetadata()._sClassName === "sap.m.Button"){
+					btns[i].setEnabled(false);
+				}
+			}
+        }
+	});
+};
+
+incture.bpmInbox.customComponent.Component.prototype.open = function(oEvent){
+	var that=this;
+	
+};
+
+incture.bpmInbox.customComponent.Component.prototype.release = function(oEvent){
+	var that=this;
+	var task = this.oTable.getModel("bpmModel").getData().d.results[this.activeItem];
+	
+	sap.m.MessageBox.confirm("Do you want to Release '"+task.TaskTitle+"'",{
+		icon: sap.m.MessageBox.Icon.INFORMATION,
+        title: "Release Task",
+        actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
+        onClose: function(oAction) {
+        	debugger;
+        	if(oAction === "OK"){
+        		var url= "http://192.168.1.149:50000/bpmodata/tasks.svc/Release?InstanceID='"+task.InstanceID+"'&$format=json"
+        		that.makeSapCall(url,"POST",null);
+        	}
+        	var btns= that.headerToolBar.getContent();
+			for(var i=0;i<btns.length;i++){
+				if(btns[i].getMetadata()._sClassName === "sap.m.Button"){
+					btns[i].setEnabled(false);
+				}
+			}
+        }
+	});
+};
+
+incture.bpmInbox.customComponent.Component.prototype.forward = function(oEvent){
+	var that=this;
+	var task = this.oTable.getModel("bpmModel").getData().d.results[this.activeItem];
+	this.searchModel= new sap.ui.model.json.JSONModel();
+	var template= new sap.m.StandardListItem({
+		title:"{DisplayName}",
+		description:"{UniqueName}"
+	})
+	var dialog= new sap.m.SelectDialog({
+		title:"Select Freind",
+		multiSelect: false,
+		rememberSelections: true,
+		items:[],
+		search:function(oEvent){
+			var control= oEvent.getSource();
+			var searchVal= oEvent.getParameter("value")
+			var url = "http://192.168.1.149:50000/bpmodata/tasks.svc/SearchUsers?SearchPattern='"+searchVal+"'&MaxResults=100&$format=json";
+			that.searchModel =that.makeSapCall(url,"GET",null);
+			control.setModel(that.searchModel);
+		},
+		confirm: function(oEvent){
+			var item= oEvent.getParameter("selectedItem");
+			var id = item.getBindingContextPath().split("/")[3];
+			var usr= oEvent.getSource().getModel().getData().d.results[id];
+			
+			var url = "http://192.168.1.149:50000/bpmodata/tasks.svc/Forward?InstanceID='"+task.InstanceID+"'&ForwardTo='"+usr.UniqueName+"'&$format=json";
+			that.makeSapCall(url,"POST",null);
+		}
+	})
+	
+	dialog.bindAggregation("items","/d/results",template);
+	
+	dialog.open();
 };
 
 incture.bpmInbox.customComponent.Component.prototype.setTpext = function(sText){

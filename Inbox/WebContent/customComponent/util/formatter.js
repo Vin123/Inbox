@@ -15,7 +15,6 @@ formatter = {
 	        return oDate;
 		},
 		formatStatus: function(status){
-			debugger;
 			switch(status){
 			case "COMPLETED": return "Completed";
 			case "RESERVED": return "Reserved";
