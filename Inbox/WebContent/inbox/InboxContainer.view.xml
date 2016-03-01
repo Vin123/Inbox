@@ -1,0 +1,135 @@
+<core:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" 
+		controllerName="inbox.InboxContainer" xmlns:html="http://www.w3.org/1999/xhtml">
+	<Page title="">
+		<content>
+		
+<!-- 		<fb:FilterBar -->
+<!-- 			width="100%" -->
+<!-- 			vSpacing="1" -->
+<!-- 			hSpacing="1" -->
+<!-- 			position="Left" -->
+<!-- 			defaultSpan="XL3 L3 M6 S12" -->
+<!-- 			defaultIndent="XL0 L0 M0 S0" -->
+<!-- 			containerQuery="false" -->
+<!-- 			persistencyKey="" -->
+<!-- 			advancedMode="false" -->
+<!-- 			expandAdvancedArea="false" -->
+<!-- 			searchEnabled="true" -->
+<!-- 			filterBarExpanded="true" -->
+<!-- 			considerGroupTitle="false" -->
+<!-- 			showClearButton="false" -->
+<!-- 			showRestoreButton="true" -->
+<!-- 			showGoOnFB="true" -->
+<!-- 			showRestoreOnFB="false" -->
+<!-- 			showClearOnFB="false" -->
+<!-- 			showGoButton="" -->
+<!-- 			filterContainerWidth="12rem" -->
+<!-- 			validateFieldGroup="" -->
+<!-- 		 	cancel="" -->
+<!-- 		 	reset="" -->
+<!-- 			search="" -->
+<!-- 			beforeVariantSave="" -->
+<!-- 			beforeVariantFetch="" -->
+<!-- 			afterVariantLoad="" -->
+<!-- 			filterChange="" -->
+<!-- 			clear="" -->
+<!-- 			initialise="" -->
+<!-- 			afterVariantSave="" -->
+<!-- 		 	filtersDialogClosed=""> -->
+		
+<!-- 		</fb:FilterBar> -->
+<!-- <fb:FilterBar  -->
+<!-- 	width="100%" -->
+<!-- 	vSpacing="1" -->
+<!-- 	hSpacing="1" -->
+<!-- 	position="Left" -->
+<!-- 	defaultSpan="XL3 L3 M6 S12" -->
+<!-- 	defaultIndent="XL0 L0 M0 S0" -->
+<!-- 	containerQuery="false" -->
+<!-- 	persistencyKey="" -->
+<!-- 	advancedMode="false" -->
+<!-- 	expandAdvancedArea="false" -->
+<!-- 	searchEnabled="true" -->
+<!-- 	filterBarExpanded="true" -->
+<!-- 	considerGroupTitle="false" -->
+<!-- 	showClearButton="false" -->
+<!-- 	showRestoreButton="true" -->
+<!-- 	showGoOnFB="true" -->
+<!-- 	showRestoreOnFB="false" -->
+<!-- 	showClearOnFB="false" -->
+<!-- 	showGoButton="" -->
+<!-- 	filterContainerWidth="12rem" -->
+<!-- 	basicSearch="" -->
+<!-- 	validateFieldGroup="" -->
+<!-- 	cancel="" -->
+<!-- 	reset="" -->
+<!-- 	search="" -->
+<!-- 	beforeVariantSave="" -->
+<!-- 	beforeVariantFetch="" -->
+<!-- 	afterVariantLoad="" -->
+<!-- 	filterChange="" -->
+<!-- 	clear="" -->
+<!-- 	initialise="" -->
+<!-- 	afterVariantSave="" -->
+<!-- 	filtersDialogClosed=""> -->
+<!-- 		<fb:content></fb:content> sap.ui.core.Control -->
+<!-- 		<fb:filterItems> sap.ui.comp.filterbar.FilterItem -->
+<!-- 			<fb:FilterItem  -->
+<!-- 				id="id1" -->
+<!-- 				label="" -->
+<!-- 				name="" -->
+<!-- 				mandatory="false" -->
+<!-- 				visible="true" -->
+<!-- 				labelTooltip="" -->
+<!-- 				partOfCurrentVariant="false" -->
+<!-- 				visibleInFilterBar="true" -->
+<!-- 				change=""> -->
+<!-- 			</fb:FilterItem> -->
+<!-- 		</fb:filterItems> -->
+<!-- 		<fb:filterGroupItems> sap.ui.comp.filterbar.FilterGroupItem -->
+<!-- 			<fb:FilterGroupItem  -->
+<!-- 				id="id2" -->
+<!-- 				label="" -->
+<!-- 				name="" -->
+<!-- 				mandatory="false" -->
+<!-- 				visible="true" -->
+<!-- 				labelTooltip="" -->
+<!-- 				partOfCurrentVariant="false" -->
+<!-- 				visibleInFilterBar="true" -->
+<!-- 				groupTitle="" -->
+<!-- 				groupName="" -->
+<!-- 				visibleInAdvancedArea="false" -->
+<!-- 				change=""> -->
+<!-- 					<fb:control></fb:control> sap.ui.core.Control -->
+<!-- 			</fb:FilterGroupItem> -->
+<!-- 		</fb:filterGroupItems> -->
+<!-- </fb:FilterBar> -->
+
+			
+			<ComponentContainer xmlns="sap.ui.core"
+				id="comp1"
+				busy="false"
+				busyIndicatorDelay="1000"
+				visible="true"
+				fieldGroupIds=""
+				name="incture.bpmInbox.customComponent"
+				url=""
+				handleValidation="false"
+				settings="{
+				width:'100px',
+				tableButtonAlign:'right',
+				tableButtons: 'Open,Claim,Release,Forward',
+				tableButtonNames: 'Open,Claim,Release Me,Forward',
+				tableColumnNames: 'Task Title,Creation Date,Created By,Due Date,Status,Priority',
+				tableColumns: 'TaskTitle,CreationDate,CreatedBy,DueDate,Status,Priority',
+				filterList: 'Task Type, Priority, Status, Creation Date'
+				}"
+				propagateModel="false"
+				width="99%"
+				height=""
+				component=""
+				validateFieldGroup="">
+			</ComponentContainer>
+		</content>
+	</Page>
+</core:View>

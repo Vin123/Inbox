@@ -1,0 +1,19 @@
+.panel-style{
+	border: 3px solid #ff6666;
+	border-style: inset;
+}
+.whiteBG{
+	background-color: white
+}
+.header{
+	background-color: #ff6666 !important;
+	padding: .4rem .5rem !important
+}
+.table-header-size{
+	height: 10px !important
+}
+.search-height{
+}
+.link{
+	
+}
