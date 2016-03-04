@@ -25,9 +25,20 @@ sap.ui.controller("inbox.InboxContainer", {
 */
 	onAfterRendering: function() {
 		var component = this.getView().byId("comp1");
-		
+		$("#"+this.getView().getId()).css("background-color","white");
+		$("#"+component.getId()).css("background-color","white");
 		$("#"+component.getId()).find("th").addClass("header");
+		$("#"+component.getId()).find("th").find("span").addClass("table-header-text");
 		
+		var divs= $("#"+component.getId()).find("div");
+		for(var i=0;i<divs.length;i++){
+			var id=divs[i].getAttribute("id")
+			if(id && id.indexOf("table") >0){
+				$("#"+id).css("max-height","400px");
+				$("#"+id).css("overflow-y","scroll");
+				break;
+			}
+		}
 		
 	},
 

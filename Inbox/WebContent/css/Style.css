@@ -3,14 +3,28 @@
 	border-style: inset;
 }
 .whiteBG{
-	background-color: white
+	background-color: white !important;
 }
 .header{
 	background-color: #ff6666 !important;
-	padding: .4rem .5rem !important
+	padding: .4rem .5rem !important;
+}
+.header-hover{
+	background-color: #e60000 !important;
+	padding: .4rem .5rem !important;
+}
+.table-header-text{
+	cursor:pointer
 }
 .table-header-size{
 	height: 10px !important
+}
+.borderTop{
+	border-top: 5px !important;
+}
+.buttonText{
+	color: #ff6666 !important;
+	text-shadow: 0 0px 0 #ff6666 !important;
 }
 .search-height{
 }

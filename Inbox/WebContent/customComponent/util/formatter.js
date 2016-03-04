@@ -10,13 +10,19 @@ formatter = {
 			if(date){
 				date= new Date(parseInt(date.substr(6)));
 		        oDate = oDateFormat.format(date,true);
+		        
+		        var month = date.getMonth() + 1;
+		        var day = date.getDate();
+		        var year = date.getFullYear();
+		        oDate = day + "/" + month + "/" + year;
 			}
 			
 	        return oDate;
 		},
 		formatStatus: function(status){
 			switch(status){
-			case "COMPLETED": return "Completed";
+			case "READY": return "Ready";
+			case "IN_PROGRESS": return "In Progress";
 			case "RESERVED": return "Reserved";
 			}
 		},

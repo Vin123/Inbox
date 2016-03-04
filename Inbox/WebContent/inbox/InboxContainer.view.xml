@@ -1,6 +1,6 @@
 <core:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" 
 		controllerName="inbox.InboxContainer" xmlns:html="http://www.w3.org/1999/xhtml">
-	<Page title="">
+	<Page showHeader="false">
 		<content>
 		
 			<ComponentContainer xmlns="sap.ui.core"
@@ -17,13 +17,13 @@
 				tableButtonAlign:'right',
 				tableButtons: 'Open,Claim,Release,Forward',
 				tableButtonNames: 'Open,Claim,Release Me,Forward',
-				tableColumnNames: 'Task Title,Creation Date,Created By,Due Date,Status,Priority',
 				tableColumns: 'TaskTitle,CreationDate,CreatedBy,DueDate,Status,Priority',
+				tableColumnNames: 'Task Title,Creation Date,Created By,Due Date,Status,Priority',
 				filterList: 'Task Type, Priority, Status, Creation Date'
 				}"
 				propagateModel="false"
-				width="99%"
-				height=""
+				width=""
+				height="300px"
 				component=""
 				validateFieldGroup="">
 			</ComponentContainer>
