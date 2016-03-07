@@ -186,7 +186,6 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
     });
 	
 	this.oTable = new sap.m.Table({
-		//headerToolbar: this.headerToolBar,
 		items : [], 
 		columns : [],
 		mode : sap.m.ListMode.SingleSelectLeft,
@@ -196,6 +195,16 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
 			var control= oEvent.getSource();
 			var id= control.getId();
 			$("#"+id).find("th").addClass("header");
+			$("#"+id).addClass("fix-table");
+
+			if($(window).width() < 500){
+				var btns= that.headerToolBar.getContent();
+				for(var i=0;i<btns.length;i++){
+					if(btns[i].getMetadata()._sClassName === "sap.m.Button"){
+						btns[i].setText("");
+					}
+				}
+			}
 		},
 		itemPress: function(oEvent){
 		},
@@ -312,6 +321,7 @@ incture.bpmInbox.customComponent.Component.prototype.setTableButtons = function(
 				}
 			}
 		});
+		//aButton.addStyleClass("small-width");
 		this.headerToolBar.addContent(aButton);
 	}
 
@@ -407,7 +417,7 @@ incture.bpmInbox.customComponent.Component.prototype.openFilters = function(oEve
 			modal : undefined, // boolean
 			offsetX : undefined, // int
 			offsetY : undefined, // int
-			contentWidth : "40%", // sap.ui.core.CSSSize
+			contentWidth : undefined, // sap.ui.core.CSSSize
 			contentHeight : undefined, // sap.ui.core.CSSSize
 			horizontalScrolling : true, // boolean
 			verticalScrolling : true, // boolean
@@ -459,81 +469,254 @@ incture.bpmInbox.customComponent.Component.prototype.getFilterButtons = function
 	case "Priority": btnList.push(new sap.m.RadioButton({
 						  text:"All",
 						  selected:false,
+						  groupName: "priority",
 						  select: function(oEvent){
-							  var oBinding=that.oTable.getBinding("items");
-						      oBinding.filter([]);
+						  var oBinding=that.oTable.getBinding("items");
+//						      oBinding.filter([]);
+						  var filters= oBinding.aFilters;
+							  if(filters.length == 0){
+								  oBinding.filter([]);
+							  }else{
+								  for(var i=0;i<filters.length;i++){
+									  if(filters[i].sPath=== "Priority"){
+										  filters.splice(i,1);
+										  oBinding.filter(filters);
+										  break;
+									  }
+								  }
+							  }
 						  }
 					}));
 					btnList.push(new sap.m.RadioButton({
 						  text:"Low",
 						  selected:false,
+						  groupName: "priority",
 						  select: function(oEvent){
 							  var oBinding=that.oTable.getBinding("items");
-						      var oFilter=new sap.ui.model.Filter("Priority","EQ","LOW");
-						      oBinding.filter([oFilter]);
+							  var filters= oBinding.aFilters;
+							  if(filters.length == 0){
+								  oBinding.filter(new sap.ui.model.Filter("Priority","EQ","LOW"));
+							  }else{
+								  var isPresent=false;
+								  for(var i=0;i<filters.length;i++){
+									  if(filters[i].sPath=== "Priority"){
+										  isPresent= true;
+										  filters[i]= new sap.ui.model.Filter("Priority","EQ","LOW");
+										  break;
+									  }
+								  }
+								  if(!isPresent){
+									  filters.push(new sap.ui.model.Filter("Priority","EQ","LOW"));
+								  }
+								  oBinding.filter(filters);
+							  }
+						    //  var oFilter=new sap.ui.model.Filter("Priority","EQ","LOW");
 						  }
 					}));
 					btnList.push(new sap.m.RadioButton({
 				    	  text:"Medium",
 				    	  selected:false,
+				    	  groupName: "priority",
 				    	  select: function(oEvent){
-				    		  var oBinding=that.oTable.getBinding("items");
-						      var oFilter=new sap.ui.model.Filter("Priority","EQ","MEDIUM");
-						      oBinding.filter([oFilter]);
-				    	  }
+							  var oBinding=that.oTable.getBinding("items");
+							  var filters= oBinding.aFilters;
+							  if(filters.length == 0){
+								  oBinding.filter(new sap.ui.model.Filter("Priority","EQ","MEDIUM"));
+							  }else{
+								  var isPresent=false;
+								  for(var i=0;i<filters.length;i++){
+									  if(filters[i].sPath=== "Priority"){
+										  isPresent= true;
+										  filters[i]= new sap.ui.model.Filter("Priority","EQ","MEDIUM");
+										  break;
+									  }
+								  }
+								  if(!isPresent){
+									  filters.push(new sap.ui.model.Filter("Priority","EQ","MEDIUM"));
+								  }
+								  oBinding.filter(filters);
+							  }
+						  }
 				      }));
 					btnList.push(new sap.m.RadioButton({
 				    	  text:"High",
 				    	  selected:false,
+				    	  groupName: "priority",
 				    	  select: function(oEvent){
-				    		  var oBinding=that.oTable.getBinding("items");
-						      var oFilter=new sap.ui.model.Filter("Priority","EQ","HIGH");
-						      oBinding.filter([oFilter]);
-				    	  }
+							  var oBinding=that.oTable.getBinding("items");
+							  var filters= oBinding.aFilters;
+							  if(filters.length == 0){
+								  oBinding.filter(new sap.ui.model.Filter("Priority","EQ","HIGH"));
+							  }else{
+								  var isPresent=false;
+								  for(var i=0;i<filters.length;i++){
+									  if(filters[i].sPath=== "Priority"){
+										  isPresent= true;
+										  filters[i]= new sap.ui.model.Filter("Priority","EQ","HIGH");
+										  break;
+									  }
+								  }
+								  if(!isPresent){
+									  filters.push(new sap.ui.model.Filter("Priority","EQ","HIGH"));
+								  }
+								  oBinding.filter(filters);
+							  }
+						  }
 				      }));
 					btnList.push(new sap.m.RadioButton({
 				    	  text:"Very High",
 				    	  selected:false,
+				    	  groupName: "priority",
 				    	  select: function(oEvent){
-				    		  var oBinding=that.oTable.getBinding("items");
-						      var oFilter=new sap.ui.model.Filter("Priority","EQ","VERY HIGH");
-						      oBinding.filter([oFilter]);
-				    	  }
+							  var oBinding=that.oTable.getBinding("items");
+							  var filters= oBinding.aFilters;
+							  if(filters.length == 0){
+								  oBinding.filter(new sap.ui.model.Filter("Priority","EQ","VERY_HIGH"));
+							  }else{
+								  var isPresent=false;
+								  for(var i=0;i<filters.length;i++){
+									  if(filters[i].sPath=== "Priority"){
+										  isPresent= true;
+										  filters[i]= new sap.ui.model.Filter("Priority","EQ","VERY_HIGH");
+										  break;
+									  }
+								  }
+								  if(!isPresent){
+									  filters.push(new sap.ui.model.Filter("Priority","EQ","VERY_HIGH"));
+								  }
+								  oBinding.filter(filters);
+							  }
+						  }
 				      }));
 					 break;
 	case "Status":btnList.push(new sap.m.RadioButton({
 					  text:"All",
 					  selected:false,
+					  groupName: "status",
 					  select: function(oEvent){
 						  var oBinding=that.oTable.getBinding("items");
-					      oBinding.filter([]);
+						  var filters= oBinding.aFilters;
+							  if(filters.length == 0){
+								  oBinding.filter([]);
+							  }else{
+								  for(var i=0;i<filters.length;i++){
+									  if(filters[i].sPath=== "Status"){
+										  filters.splice(i,1);
+										  oBinding.filter(filters);
+										  break;
+									  }
+								  }
+							  }
+						  
+//						  var oBinding=that.oTable.getBinding("items");
+//					      oBinding.filter([]);
+//						  var oBinding=that.oTable.getBinding("items");
+//						  var filters= oBinding.aFilters;
+//						  if(filters.length == 0){
+//							  oBinding.filter([]);
+//						  }else{
+//							  for(var i=0;i<filters.length;i++){
+//								  if(filters[i].sPath=== "Status"){
+//									  debugger;
+//									  filters[i]= new sap.ui.model.Filter("Priority","EQ","MEDIUM");
+//								  }
+//							  }
+//						  }
 					  }
 					}));
 					btnList.push(new sap.m.RadioButton({
 					  text:"Ready",
 					  selected:false,
+					  groupName: "status",
 					  select: function(oEvent){
+//						  var oBinding=that.oTable.getBinding("items");
+//					      var oFilter=new sap.ui.model.Filter("Status","EQ","Ready");
+//					      oBinding.filter([oFilter]);
+//						  var oBinding=that.oTable.getBinding("items");
+//						  var filters= oBinding.aFilters;
+//						  if(filters.length == 0){
+//							  oBinding.filter([new sap.ui.model.Filter("Status","EQ","Ready")]);
+//						  }else{
+//							  for(var i=0;i<filters.length;i++){
+//								  if(filters[i].sPath=== "Status"){
+//									  filters[i]= new sap.ui.model.Filter("Status","EQ","Ready");
+//								  }
+//							  }
+//						  }
 						  var oBinding=that.oTable.getBinding("items");
-					      var oFilter=new sap.ui.model.Filter("Status","EQ","Ready");
-					      oBinding.filter([oFilter]);
+						  var filters= oBinding.aFilters;
+						  if(filters.length == 0){
+							  oBinding.filter(new sap.ui.model.Filter("Status","EQ","Ready"));
+						  }else{
+							  var isPresent=false;
+							  for(var i=0;i<filters.length;i++){
+								  if(filters[i].sPath=== "Status"){
+									  isPresent= true;
+									  filters[i]= new sap.ui.model.Filter("Status","EQ","Ready");
+									  break;
+								  }
+							  }
+							  if(!isPresent){
+								  filters.push(new sap.ui.model.Filter("Status","EQ","Ready"));
+							  }
+							  oBinding.filter(filters);
+						  }
 					  }
 					}));
 					btnList.push(new sap.m.RadioButton({
 					  text:"Reserved",
 					  selected:false,
+					  groupName: "status",
 					  select: function(oEvent){
+//						  var oBinding=that.oTable.getBinding("items");
+//					      var oFilter=new sap.ui.model.Filter("Status","EQ","Reserved");
+//					      oBinding.filter([oFilter]);
 						  var oBinding=that.oTable.getBinding("items");
-					      var oFilter=new sap.ui.model.Filter("Status","EQ","Reserved");
-					      oBinding.filter([oFilter]);
+						  var filters= oBinding.aFilters;
+						  if(filters.length == 0){
+							  oBinding.filter(new sap.ui.model.Filter("Status","EQ","Reserved"));
+						  }else{
+							  var isPresent=false;
+							  for(var i=0;i<filters.length;i++){
+								  if(filters[i].sPath=== "Status"){
+									  isPresent= true;
+									  filters[i]= new sap.ui.model.Filter("Status","EQ","Reserved");
+									  break;
+								  }
+							  }
+							  if(!isPresent){
+								  filters.push(new sap.ui.model.Filter("Status","EQ","Reserved"));
+							  }
+							  oBinding.filter(filters);
+						  }
 					  }
 					}));
 					btnList.push(new sap.m.RadioButton({
 						  text:"In Progress",
 						  selected:false,
+						  groupName: "status",
 						  select: function(oEvent){
+//							  var oBinding=that.oTable.getBinding("items");
+//						      var oFilter=new sap.ui.model.Filter("Status","EQ","IN_PROGRESS");
+//						      oBinding.filter([oFilter]);
 							  var oBinding=that.oTable.getBinding("items");
-						      var oFilter=new sap.ui.model.Filter("Status","EQ","IN_PROGRESS");
-						      oBinding.filter([oFilter]);
+							  var filters= oBinding.aFilters;
+							  if(filters.length == 0){
+								  oBinding.filter(new sap.ui.model.Filter("Status","EQ","IN_PROGRESS"));
+							  }else{
+								  var isPresent=false;
+								  for(var i=0;i<filters.length;i++){
+									  if(filters[i].sPath=== "Status"){
+										  isPresent= true;
+										  filters[i]= new sap.ui.model.Filter("Status","EQ","IN_PROGRESS");
+										  break;
+									  }
+								  }
+								  if(!isPresent){
+									  filters.push(new sap.ui.model.Filter("Status","EQ","IN_PROGRESS"));
+								  }
+								  oBinding.filter(filters);
+							  }
 						  }
 					}));
 					break;
@@ -541,8 +724,23 @@ incture.bpmInbox.customComponent.Component.prototype.getFilterButtons = function
 						  text:"All",
 						  selected:false,
 						  select: function(oEvent){
+//							  var oBinding=that.oTable.getBinding("items");
+//						      oBinding.filter([]);
+
 							  var oBinding=that.oTable.getBinding("items");
-						      oBinding.filter([]);
+							  var filters= oBinding.aFilters;
+								  if(filters.length == 0){
+									  oBinding.filter([]);
+								  }else{
+									  for(var i=0;i<filters.length;i++){
+										  if(filters[i].sPath=== "CreatedOn"){
+											  filters.splice(i,1);
+											  oBinding.filter(filters);
+											  break;
+										  }
+									  }
+								  }
+							  
 						  }
 						})); 
 						btnList.push(new sap.m.RadioButton({
@@ -550,16 +748,43 @@ incture.bpmInbox.customComponent.Component.prototype.getFilterButtons = function
 						  selected:false,
 						  select: function(oEvent){
 							  var oBinding=that.oTable.getBinding("items");
+							  var filters= oBinding.aFilters;
 							  var today=new Date();
-						      var oFilter=new sap.ui.model.Filter("CreatedOn","EQ",today);
-						      oFilter.fnTest= function(value){
+							  var dateFilter = new sap.ui.model.Filter("CreatedOn","EQ",today);
+							  dateFilter.fnTest= function(value){
 						    	  var today= new Date();
 						    	  today=today.setHours(0,0,0,0);
 						    	  value= new Date(parseInt(value.substr(6)));
 						    	  value=value.setHours(0,0,0,0);
 						    	  return today === value;
 						      };
-						      oBinding.filter([oFilter]);
+							  if(filters.length == 0){
+								  oBinding.filter(dateFilter);
+							  }else{
+								  var isPresent=false;
+								  for(var i=0;i<filters.length;i++){
+									  if(filters[i].sPath=== "CreatedOn"){
+										  isPresent= true;
+										  filters[i]= dateFilter;
+										  break;
+									  }
+								  }
+								  if(!isPresent){
+									  filters.push(dateFilter);
+								  }
+								  oBinding.filter(filters);
+							  }
+//							  var oBinding=that.oTable.getBinding("items");
+//							  var today=new Date();
+//						      var oFilter=new sap.ui.model.Filter("CreatedOn","EQ",today);
+//						      oFilter.fnTest= function(value){
+//						    	  var today= new Date();
+//						    	  today=today.setHours(0,0,0,0);
+//						    	  value= new Date(parseInt(value.substr(6)));
+//						    	  value=value.setHours(0,0,0,0);
+//						    	  return today === value;
+//						      };
+//						      oBinding.filter([oFilter]);
 						  }
 						}));
 						btnList.push(new sap.m.RadioButton({
@@ -567,10 +792,11 @@ incture.bpmInbox.customComponent.Component.prototype.getFilterButtons = function
 							  selected:false,
 							  select: function(oEvent){
 								  var oBinding=that.oTable.getBinding("items");
+								  var filters= oBinding.aFilters;
 								  var today=new Date();
-							      var oFilter=new sap.ui.model.Filter("CreatedOn","EQ",today);
-							      oFilter.fnTest= function(value){
-							    	  var nextDay=new Date();
+								  var dateFilter = new sap.ui.model.Filter("CreatedOn","EQ",today);
+								  dateFilter.fnTest= function(value){
+									  var nextDay=new Date();
 							    	  nextDay.setDate(nextDay.getDate()- 7);
 							    	  
 							    	  nextDay=nextDay.setHours(0,0,0,0);
@@ -580,7 +806,37 @@ incture.bpmInbox.customComponent.Component.prototype.getFilterButtons = function
 							    	  
 							    	  return value > nextDay;
 							      };
-							      oBinding.filter([oFilter]);
+								  if(filters.length == 0){
+									  oBinding.filter(dateFilter);
+								  }else{
+									  var isPresent=false;
+									  for(var i=0;i<filters.length;i++){
+										  if(filters[i].sPath=== "CreatedOn"){
+											  isPresent= true;
+											  filters[i]= dateFilter;
+											  break;
+										  }
+									  }
+									  if(!isPresent){
+										  filters.push(dateFilter);
+									  }
+									  oBinding.filter(filters);
+								  }
+//								  var oBinding=that.oTable.getBinding("items");
+//								  var today=new Date();
+//							      var oFilter=new sap.ui.model.Filter("CreatedOn","EQ",today);
+//							      oFilter.fnTest= function(value){
+//							    	  var nextDay=new Date();
+//							    	  nextDay.setDate(nextDay.getDate()- 7);
+//							    	  
+//							    	  nextDay=nextDay.setHours(0,0,0,0);
+//							    	  
+//							    	  value= new Date(parseInt(value.substr(6)));
+//							    	  value=value.setHours(0,0,0,0);
+//							    	  
+//							    	  return value > nextDay;
+//							      };
+//							      oBinding.filter([oFilter]);
 							  }
 						}));
 						btnList.push(new sap.m.RadioButton({
@@ -588,10 +844,11 @@ incture.bpmInbox.customComponent.Component.prototype.getFilterButtons = function
 							  selected:false,
 							  select: function(oEvent){
 								  var oBinding=that.oTable.getBinding("items");
+								  var filters= oBinding.aFilters;
 								  var today=new Date();
-							      var oFilter=new sap.ui.model.Filter("CreatedOn","EQ",today);
-							      oFilter.fnTest= function(value){
-							    	  var nextDay=new Date();
+								  var dateFilter = new sap.ui.model.Filter("CreatedOn","EQ",today);
+								  dateFilter.fnTest= function(value){
+									  var nextDay=new Date();
 							    	  nextDay.setDate(nextDay.getDate()- 15);
 							    	  
 							    	  nextDay=nextDay.setHours(0,0,0,0);
@@ -601,7 +858,37 @@ incture.bpmInbox.customComponent.Component.prototype.getFilterButtons = function
 							    	  
 							    	  return value > nextDay;
 							      };
-							      oBinding.filter([oFilter]);
+								  if(filters.length == 0){
+									  oBinding.filter(dateFilter);
+								  }else{
+									  var isPresent=false;
+									  for(var i=0;i<filters.length;i++){
+										  if(filters[i].sPath=== "CreatedOn"){
+											  isPresent= true;
+											  filters[i]= dateFilter;
+											  break;
+										  }
+									  }
+									  if(!isPresent){
+										  filters.push(dateFilter);
+									  }
+									  oBinding.filter(filters);
+								  }
+//								  var oBinding=that.oTable.getBinding("items");
+//								  var today=new Date();
+//							      var oFilter=new sap.ui.model.Filter("CreatedOn","EQ",today);
+//							      oFilter.fnTest= function(value){
+//							    	  var nextDay=new Date();
+//							    	  nextDay.setDate(nextDay.getDate()- 15);
+//							    	  
+//							    	  nextDay=nextDay.setHours(0,0,0,0);
+//							    	  
+//							    	  value= new Date(parseInt(value.substr(6)));
+//							    	  value=value.setHours(0,0,0,0);
+//							    	  
+//							    	  return value > nextDay;
+//							      };
+//							      oBinding.filter([oFilter]);
 							  }
 						}));
 						break;
@@ -978,6 +1265,9 @@ incture.bpmInbox.customComponent.Component.prototype.makeAjaxPostCall = function
           },
 		  success: function(rData, jqXHR, options){
 			  that.oTable.setBusy(false);
+			  that.oTable.removeSelections();
+			  var btns= that.headerToolBar.getContent();
+			  that.enableButtons(btns, false);
 			  that[callBack]();
 		  },
 		  error:function(error){
@@ -1010,6 +1300,9 @@ incture.bpmInbox.customComponent.Component.prototype.makeAjaxGetCall = function(
 		  success: function(rData, jqXHR, options){
 			  that.oTable.setBusy(false);
 			  that.token= options.getResponseHeader("x-csrf-token");
+			  that.oTable.removeSelections();
+			  var btns= that.headerToolBar.getContent();
+			  that.enableButtons(btns, false);
 			  oModel.setData(rData);
 		  },
 		  error:function(error){

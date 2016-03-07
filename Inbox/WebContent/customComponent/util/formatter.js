@@ -24,6 +24,7 @@ formatter = {
 			case "READY": return "Ready";
 			case "IN_PROGRESS": return "In Progress";
 			case "RESERVED": return "Reserved";
+			case "COMPLETED": return "Completed";
 			}
 		},
 		formatPriority: function(priority){

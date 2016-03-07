@@ -34,8 +34,7 @@ sap.ui.controller("inbox.InboxContainer", {
 		for(var i=0;i<divs.length;i++){
 			var id=divs[i].getAttribute("id")
 			if(id && id.indexOf("table") >0){
-				$("#"+id).css("max-height","400px");
-				$("#"+id).css("overflow-y","scroll");
+				$("#"+id).addClass("fix-table");
 				break;
 			}
 		}

@@ -15,11 +15,11 @@
 				settings="{
 				width:'100px',
 				tableButtonAlign:'right',
-				tableButtons: 'Open,Claim,Release,Forward',
-				tableButtonNames: 'Open,Claim,Release Me,Forward',
+				tableButtons: 'Claim,Release,Forward',
+				tableButtonNames: 'Claim,Release ,Forward',
 				tableColumns: 'TaskTitle,CreationDate,CreatedBy,DueDate,Status,Priority',
 				tableColumnNames: 'Task Title,Creation Date,Created By,Due Date,Status,Priority',
-				filterList: 'Task Type, Priority, Status, Creation Date'
+				filterList: 'Priority, Status, Creation Date'
 				}"
 				propagateModel="false"
 				width=""
