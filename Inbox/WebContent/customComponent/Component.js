@@ -26,6 +26,7 @@ sap.ui.core.UIComponent.extend("incture.bpmInbox.customComponent.Component",{
 
 incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
 	var that= this;
+	this.host="http://192.168.1.149:50000";
 	
 	/**set resource model**/ 
 	var resourceModel = new sap.ui.model.resource.ResourceModel({
@@ -74,6 +75,8 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
 			case "completed":
 				var model=that.getCompletedTasks();
 				that.oTable.setModel(model,"bpmModel");
+				var btns= that.headerToolBar.getContent();
+				that.enableButtons(btns,false);
 				break;
 			case "overdue":
 				var model=that.getOverdueTasks();
@@ -96,7 +99,7 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
 		design : sap.m.ToolbarDesign.Auto, 
 		tooltip : undefined, 
 		content : [
-		           new sap.ui.core.Icon({
+		          /* new sap.ui.core.Icon({
 					src : "sap-icon://filter", 
 					size : "1.2em", 
 					color : "#ff6666",
@@ -115,7 +118,7 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
 						var control = oEvent.getSource();
 						that.openFilters(oEvent);
 					}, this ]
-		           }),
+		           }),*/
 		           this.SelectFilterTask ,
 		           new sap.m.ToolbarSpacer({}),
 		           new sap.m.SearchField({
@@ -149,26 +152,12 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
 		content : []
 	});
 	this.headerToolBar.addStyleClass("whiteBG");
-	this.headerToolBar.addContent(new sap.ui.core.Icon({
-		src : "sap-icon://refresh", 
-		size : "1.2em", 
-		color : "#ff6666",
-		hoverColor : "#e60000",
-		activeColor : undefined,
-		width : undefined,
-		height : "30px", 
-		backgroundColor : undefined,
-		hoverBackgroundColor : undefined,
-		activeBackgroundColor : undefined, 
-		decorative : true, 
-		useIconTooltip : true, 
-		alt : undefined,
-		tooltip : undefined, 
-		press : [ function(oEvent) {
-			var control = oEvent.getSource();
-			that.refreshTable(oEvent);
-		}, this ]
-       }));
+	
+	this.headerToolBar.addContent(searchBar);
+	
+	
+	
+	
 	
 	this.columnListItem = new sap.m.ColumnListItem({
     	cells:[],
@@ -220,7 +209,7 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
     	}
 	});
 	
-	panel.addContent(searchBar);
+	//panel.addContent(searchBar);
 	panel.addContent(this.headerToolBar);
 	panel.addContent(this.oTable);
 	
@@ -261,24 +250,29 @@ incture.bpmInbox.customComponent.Component.prototype.enableButtons = function(bt
 				var type= btnList[i].getIcon().split("/")[2];
 				var item= this.oTable.getModel("bpmModel").getData().d.results[itemId];
 				switch(type){
-					case "locked":if(item.SupportsClaim){
+					case "locked":if(item.SupportsClaim && item.Status !== "COMPLETED"){
 						btnList[i].setEnabled(true);
 					}else{
 						btnList[i].setEnabled(false);
 					} ;//claim
 					break;
-					case "unlocked":if(item.SupportsRelease){
+					case "unlocked":if(item.SupportsRelease && item.Status !== "COMPLETED"){
 						btnList[i].setEnabled(true);
 					} else{
 						btnList[i].setEnabled(false);
 					};//release
 					break;
-					case "forward": if(item.SupportsForward){
+					case "forward": if(item.SupportsForward && item.Status !== "COMPLETED"){
 						btnList[i].setEnabled(true);
 					}else{
 						btnList[i].setEnabled(false);
 					};//forward
-					default: btnList[i].setEnabled(true);
+					case "open-folder":if(item.Status !== "COMPLETED"){
+						btnList[i].setEnabled(true);
+					}else{
+						btnList[i].setEnabled(false);
+					}
+					//default: btnList[i].setEnabled(true);
 				}
 			}
 		}
@@ -323,8 +317,28 @@ incture.bpmInbox.customComponent.Component.prototype.setTableButtons = function(
 		});
 		//aButton.addStyleClass("small-width");
 		this.headerToolBar.addContent(aButton);
-	}
+	} 
 
+	this.headerToolBar.addContent(new sap.ui.core.Icon({
+		src : "sap-icon://refresh", 
+		size : "1.2em", 
+		color : "#ff6666",
+		hoverColor : "#e60000",
+		activeColor : undefined,
+		width : undefined,
+		height : "30px", 
+		backgroundColor : undefined,
+		hoverBackgroundColor : undefined,
+		activeBackgroundColor : undefined, 
+		decorative : true, 
+		useIconTooltip : true, 
+		alt : undefined,
+		tooltip : undefined, 
+		press : [ function(oEvent) {
+			var control = oEvent.getSource();
+			that.refreshTable(oEvent);
+		}, this ]
+       }));
 	return this;
 };
 
@@ -906,6 +920,7 @@ incture.bpmInbox.customComponent.Component.prototype.getCellControl = function(c
 			href : "", 
 			emphasized : true, 
 			tooltip : undefined, 
+			enabled:"{parts:[{path:'bpmModel>Status'}], formatter: 'formatter.formatLinkStatus' }",
 			press : [ function(oEvent) {
 				var control = oEvent.getSource();
 				that.open(oEvent, true);
@@ -993,7 +1008,7 @@ incture.bpmInbox.customComponent.Component.prototype.applySearchPatternToListIte
 
 incture.bpmInbox.customComponent.Component.prototype.getAllBPMTasks = function(){
 	var typeOfTask="ne";
-	var url="http://192.168.1.149:50000/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=Status ne 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
+	var url=this.host+"/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=Status ne 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
 	var method="GET";
 	var oParam=null;
 	
@@ -1035,7 +1050,7 @@ incture.bpmInbox.customComponent.Component.prototype.claim = function(oEvent){
         actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
         onClose: function(oAction) {
         	if(oAction === "OK"){
-        		var url= "http://192.168.1.149:50000/bpmodata/tasks.svc/Claim?InstanceID='"+task.InstanceID+"'&$format=json"
+        		var url= this.host+"/bpmodata/tasks.svc/Claim?InstanceID='"+task.InstanceID+"'&$format=json"
         		//that.makeSapCall(url,"POST",null);
         		that.makeAjaxPostCall(url,"handleClaimSuccess");
         	}
@@ -1055,7 +1070,7 @@ incture.bpmInbox.customComponent.Component.prototype.handleClaimSuccess = functi
 	    width: "15em",                  
 	});
 	
-	var url="http://192.168.1.149:50000/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=Status ne 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
+	var url=this.host+"/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=Status ne 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
 	var method="GET";
 	var oParam=null;
 	
@@ -1069,7 +1084,7 @@ incture.bpmInbox.customComponent.Component.prototype.handleReleaseSuccess = func
 	    duration: 3000,                 
 	    width: "15em",                  
 	});
-	var url="http://192.168.1.149:50000/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=Status ne 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
+	var url=this.host+"/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=Status ne 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
 	var method="GET";
 	var oParam=null;
 	
@@ -1083,7 +1098,7 @@ incture.bpmInbox.customComponent.Component.prototype.handleForwardSuccess = func
 	    duration: 3000,                 
 	    width: "15em",                  
 	});
-	var url="http://192.168.1.149:50000/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=Status ne 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
+	var url= this.host+"/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=Status ne 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
 	var method="GET";
 	var oParam=null;
 	
@@ -1104,11 +1119,11 @@ incture.bpmInbox.customComponent.Component.prototype.open = function(oEvent, isL
 		task = this.oTable.getModel("bpmModel").getData().d.results[this.activeItem];
 	}
 	
-	var url="http://192.168.1.149:50000/bpmodata/tasks.svc/TaskCollection(InstanceID='"+task.InstanceID+"',SAP__Origin='SAPSERVER_PO1_00')/UIExecutionLink?$format=json";
+	var url= this.host+"/bpmodata/tasks.svc/TaskCollection(InstanceID='"+task.InstanceID+"',SAP__Origin='SAPSERVER_PO1_00')/UIExecutionLink?$format=json";
 	var urlModel= this.makeAjaxGetCall(url);
 	
 	var link= urlModel.getData().d.GUI_Link;
-	window.open(link);
+	window.open(link,"_self",null,false);
 };
 
 incture.bpmInbox.customComponent.Component.prototype.release = function(oEvent){
@@ -1121,7 +1136,7 @@ incture.bpmInbox.customComponent.Component.prototype.release = function(oEvent){
         actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
         onClose: function(oAction) {
         	if(oAction === "OK"){
-        		var url= "http://192.168.1.149:50000/bpmodata/tasks.svc/Release?InstanceID='"+task.InstanceID+"'&$format=json"
+        		var url= this.host+"/bpmodata/tasks.svc/Release?InstanceID='"+task.InstanceID+"'&$format=json"
         		that.makeAjaxPostCall(url,"handleReleaseSuccess");
         	}
         	var btns= that.headerToolBar.getContent();
@@ -1150,7 +1165,7 @@ incture.bpmInbox.customComponent.Component.prototype.forward = function(oEvent){
 		search:function(oEvent){
 			var control= oEvent.getSource();
 			var searchVal= oEvent.getParameter("value")
-			var url = "http://192.168.1.149:50000/bpmodata/tasks.svc/SearchUsers?SearchPattern='"+searchVal+"'&MaxResults=100&$format=json";
+			var url = this.host+"/bpmodata/tasks.svc/SearchUsers?SearchPattern='"+searchVal+"'&MaxResults=100&$format=json";
 			that.searchModel =that.makeSapCall(url,"GET",null);
 			control.setModel(that.searchModel);
 		},
@@ -1159,7 +1174,7 @@ incture.bpmInbox.customComponent.Component.prototype.forward = function(oEvent){
 			var id = item.getBindingContextPath().split("/")[3];
 			var usr= oEvent.getSource().getModel().getData().d.results[id];
 			
-			var url = "http://192.168.1.149:50000/bpmodata/tasks.svc/Forward?InstanceID='"+task.InstanceID+"'&ForwardTo='"+usr.UniqueName+"'&$format=json";
+			var url = this.host+"/bpmodata/tasks.svc/Forward?InstanceID='"+task.InstanceID+"'&ForwardTo='"+usr.UniqueName+"'&$format=json";
 			that.makeAjaxPostCall(url,"handleForwardSuccess");
 		}
 	})
@@ -1171,7 +1186,7 @@ incture.bpmInbox.customComponent.Component.prototype.forward = function(oEvent){
 
 incture.bpmInbox.customComponent.Component.prototype.getOpenTasks = function(){
 	var model =null;
-	var url="http://192.168.1.149:50000/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=Status ne 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
+	var url= this.host+"/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=Status ne 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
 	model= this.makeAjaxGetCall(url);
 	this.refreshFilters();
 	return model;
@@ -1179,7 +1194,7 @@ incture.bpmInbox.customComponent.Component.prototype.getOpenTasks = function(){
 
 incture.bpmInbox.customComponent.Component.prototype.getCompletedTasks = function(){
 	var model =null;
-	var url="http://192.168.1.149:50000/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=Status eq 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
+	var url= this.host+"/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=Status eq 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
 	model= this.makeAjaxGetCall(url);
 	this.refreshFilters();
 	return model;
@@ -1198,7 +1213,7 @@ incture.bpmInbox.customComponent.Component.prototype.getOverdueTasks = function(
 	var timeStr = timeFormat.format(new Date(today + TZOffsetMs));  //11:00 AM  
 	var formattedDate = dateStr + "T" + timeStr;
 	
-	var url="http://192.168.1.149:50000/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=CompletionDeadLine lt datetime'"+formattedDate+"' and Status ne 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
+	var url= this.host+"/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=CompletionDeadLine lt datetime'"+formattedDate+"' and Status ne 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
 	model= this.makeAjaxGetCall(url);
 	this.refreshFilters();
 	return model;
@@ -1206,7 +1221,7 @@ incture.bpmInbox.customComponent.Component.prototype.getOverdueTasks = function(
 
 incture.bpmInbox.customComponent.Component.prototype.getEscalatedTasks = function(){
 	var model =null;
-	var url="http://192.168.1.149:50000/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=IsEscalated eq true and Status ne 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
+	var url= this.host+"/bpmodata/tasks.svc/TaskCollection?$skip=0&$orderby=CreatedOn desc &$filter=IsEscalated eq true and Status ne 'COMPLETED'&$expand=TaskDefinitionData&$format=json";
 	model= this.makeAjaxGetCall(url);
 	this.refreshFilters();
 	return model;
@@ -1223,6 +1238,8 @@ incture.bpmInbox.customComponent.Component.prototype.refreshTable = function(){
 	case "completed":
 		var model=this.getCompletedTasks();
 		this.oTable.setModel(model,"bpmModel");
+		var btns= this.headerToolBar.getContent();
+		this.enableButtons(btns,false);
 		break;
 	case "overdue":
 		var model=this.getOverdueTasks();
@@ -1357,17 +1374,45 @@ sap.m.Text.extend("MyText",{
 		var dialog= new sap.m.Dialog({
 			title: title,
 			contentWidth:"50px",
-			contentHeight:"130px",
+			contentHeight:"160px",
 			content:[
-			         new sap.m.RadioButtonGroup({
-			        	 buttons:[
-			        	          new sap.m.RadioButton({text: "Sort Ascending", select: function(oEvent){
-			        	          }}),
-			        	          new sap.m.RadioButton({text: "Sort Descending", select: function(oEvent){
-			        	          }})
-			        	          ]
-			         })
-			         ],
+			         new sap.m.VBox({
+						direction : sap.m.FlexDirection.Column, 
+						fitContainer : false,
+						justifyContent : sap.m.FlexJustifyContent.Start, 
+						alignItems : sap.m.FlexAlignItems.Stretch,
+						items : [
+								new sap.m.RadioButtonGroup({
+									 buttons:[
+									          new sap.m.RadioButton({text: "Sort Ascending", select: function(oEvent){
+									          }}),
+									          new sap.m.RadioButton({text: "Sort Descending", select: function(oEvent){
+									          }})
+									          ]
+								}),
+//						        new sap.ui.core.Icon({
+//									src : "sap-icon://filter", 
+//									size : "1.2em", 
+//									color : "#ff6666",
+//									hoverColor : "#e60000",
+//									activeColor : undefined,
+//									width : undefined,
+//									height : "30px", 
+//									backgroundColor : undefined,
+//									hoverBackgroundColor : undefined,
+//									activeBackgroundColor : undefined, 
+//									decorative : true, 
+//									useIconTooltip : true, 
+//									alt : undefined,
+//									tooltip : undefined, 
+//									press : [ function(oEvent) {
+//										var control = oEvent.getSource();
+//										that.openFilters(oEvent);
+//									}, this ]
+//					           })
+						         ], 
+					})
+		         ],
 			beginButton: new sap.m.Button({
 				text:"OK",
 				press: function(oEvent){

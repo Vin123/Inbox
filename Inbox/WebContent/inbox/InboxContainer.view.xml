@@ -15,8 +15,8 @@
 				settings="{
 				width:'100px',
 				tableButtonAlign:'right',
-				tableButtons: 'Claim,Release,Forward',
-				tableButtonNames: 'Claim,Release ,Forward',
+				tableButtons: 'Open,Claim,Release,Forward',
+				tableButtonNames: 'Open, Claim,Release ,Forward',
 				tableColumns: 'TaskTitle,CreationDate,CreatedBy,DueDate,Status,Priority',
 				tableColumnNames: 'Task Title,Creation Date,Created By,Due Date,Status,Priority',
 				filterList: 'Priority, Status, Creation Date'

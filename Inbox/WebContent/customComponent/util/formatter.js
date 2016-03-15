@@ -34,5 +34,11 @@ formatter = {
 			case "LOW": return "Low";
 			}
 			return priority;
+		},
+		formatLinkStatus: function(status){
+			if(status === "COMPLETED"){
+				return false;
+			}
+			return true;
 		}
 }
