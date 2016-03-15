@@ -89,7 +89,7 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
 				
 			}
 		}, this ]
-	});
+	}).addStyleClass("select-hover");
 
 	var searchBar = new sap.m.Toolbar({
 		width : "100%", 
@@ -103,7 +103,7 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
 					src : "sap-icon://filter", 
 					size : "1.2em", 
 					color : "#ff6666",
-					hoverColor : "#e60000",
+					hoverColor : "#d345b5",
 					activeColor : undefined,
 					width : undefined,
 					height : "30px", 
@@ -185,6 +185,7 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
 			var id= control.getId();
 			$("#"+id).find("th").addClass("header");
 			$("#"+id).addClass("fix-table");
+			$("#"+id).find("th").find("span").addClass("table-header-text");
 
 			if($(window).width() < 500){
 				var btns= that.headerToolBar.getContent();
@@ -322,8 +323,8 @@ incture.bpmInbox.customComponent.Component.prototype.setTableButtons = function(
 	this.headerToolBar.addContent(new sap.ui.core.Icon({
 		src : "sap-icon://refresh", 
 		size : "1.2em", 
-		color : "#ff6666",
-		hoverColor : "#e60000",
+		color : "#902278",
+		hoverColor : "#d345b5",
 		activeColor : undefined,
 		width : undefined,
 		height : "30px", 
@@ -1394,7 +1395,7 @@ sap.m.Text.extend("MyText",{
 //									src : "sap-icon://filter", 
 //									size : "1.2em", 
 //									color : "#ff6666",
-//									hoverColor : "#e60000",
+//									hoverColor : "#d345b5",
 //									activeColor : undefined,
 //									width : undefined,
 //									height : "30px", 
@@ -1438,7 +1439,8 @@ sap.m.Text.extend("MyText",{
 		});
 		dialog.open();
 		
-		$("#"+dialog.getId()).find("header").css("background-color","#ff6666");
+		$("#"+dialog.getId()).find("header").css("background-color","#902278");
+		$("#"+dialog.getId()).find("header").find("h1").addClass("dialog-header-text");
 		$("#"+dialog.getId()).find("footer").addClass("whiteBG");
 		$("#"+dialog.getId()).find("footer").addClass("borderTop");
 		$("#"+dialog.getId()).find("footer").find("button").find("div").addClass("buttonText");

@@ -6,11 +6,11 @@
 	background-color: white !important;
 }
 .header{
-	background-color: #ff6666 !important;
+	background-color: #902278!important;
 	padding: .4rem .5rem !important;
 }
 .header-hover{
-	background-color: #e60000 !important;
+	background-color: #d345b5 !important;
 	padding: .4rem .5rem !important;
 }
 .fix-table{
@@ -18,7 +18,9 @@
 	overflow-y: scroll
 }
 .table-header-text{
-	cursor:pointer
+	cursor: pointer;
+    font-weight: bold !important;
+    color: black !important;
 }
 .table-header-size{
 	height: 10px !important
@@ -27,11 +29,21 @@
 	border-top: 5px !important;
 }
 .buttonText{
-	color: #ff6666 !important;
-	text-shadow: 0 0px 0 #ff6666 !important;
+	color: #902278!important;
+	text-shadow: 0 0px 0 #902278!important;
 }
 .small-width{
 	width: 30px !important;
+}
+.dialog-header-text{
+	 font-weight: bold !important;
+    color: black !important;
+}
+.select-hover:hover{
+	border: 2px solid #902278 !important;
+}
+.select-hover:active{
+	border: 1px solid #902278 !important;
 }
 .search-height{
 }
