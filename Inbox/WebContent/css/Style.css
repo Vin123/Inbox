@@ -42,10 +42,16 @@
 .select-hover:hover{
 	border: 2px solid #902278 !important;
 }
-.select-hover:active{
+.select-hover:focus{
 	border: 1px solid #902278 !important;
 }
-.search-height{
+.search-hover:hover{
+	border-color: #902278 !important;
+	border: 2px solid #902278 !important;
+}
+.search-hover:active{
+	border-color: #902278 !important;
+	border: 2px solid #902278 !important;
 }
 .link{
 	

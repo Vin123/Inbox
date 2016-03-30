@@ -138,9 +138,10 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
 					liveChange : [ function(oEvent) {
 						var control = oEvent.getSource();
 					}, this ]
-				}).addStyleClass("search-height")
+				})
 		           ]
 	});
+	
 	
 	this.headerToolBar = new sap.m.Toolbar({
 		width : "100%", 
@@ -195,6 +196,9 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
 					}
 				}
 			}
+			var searchBarId=control.getParent().getAggregation("content")[0].getAggregation("content")[0].getAggregation("content")[2].getId();
+			$("#"+searchBarId).find("form").addClass("search-hover");
+			//searchBar.getContent()[2].addStyleClass("search-hover");
 		},
 		itemPress: function(oEvent){
 		},
@@ -1166,7 +1170,7 @@ incture.bpmInbox.customComponent.Component.prototype.forward = function(oEvent){
 		search:function(oEvent){
 			var control= oEvent.getSource();
 			var searchVal= oEvent.getParameter("value")
-			var url = this.host+"/bpmodata/tasks.svc/SearchUsers?SearchPattern='"+searchVal+"'&MaxResults=100&$format=json";
+			var url = that.host+"/bpmodata/tasks.svc/SearchUsers?SearchPattern='"+searchVal+"'&MaxResults=100&$format=json";
 			that.searchModel =that.makeSapCall(url,"GET",null);
 			control.setModel(that.searchModel);
 		},
@@ -1175,7 +1179,7 @@ incture.bpmInbox.customComponent.Component.prototype.forward = function(oEvent){
 			var id = item.getBindingContextPath().split("/")[3];
 			var usr= oEvent.getSource().getModel().getData().d.results[id];
 			
-			var url = this.host+"/bpmodata/tasks.svc/Forward?InstanceID='"+task.InstanceID+"'&ForwardTo='"+usr.UniqueName+"'&$format=json";
+			var url = that.host+"/bpmodata/tasks.svc/Forward?InstanceID='"+task.InstanceID+"'&ForwardTo='"+usr.UniqueName+"'&$format=json";
 			that.makeAjaxPostCall(url,"handleForwardSuccess");
 		}
 	})
@@ -1418,7 +1422,7 @@ sap.m.Text.extend("MyText",{
 				text:"OK",
 				press: function(oEvent){
 					var dialog = oEvent.getSource().getParent();
-					var radioBtn = dialog.getAggregation("content")[0];
+					var radioBtn = dialog.getAggregation("content")[0].getAggregation("items")[0];
 					var table = that.getParent().getParent();
 					var bDesc= false;
 					if(radioBtn.getSelectedIndex() === 1){
