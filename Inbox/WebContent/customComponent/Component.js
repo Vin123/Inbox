@@ -36,6 +36,7 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
 
 	
 	var panel = new sap.m.Panel({
+		id: "panelID",
 		expandable: false,
 		content:[]
 	}).addStyleClass("panel-style");
@@ -198,7 +199,6 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
 			}
 			var searchBarId=control.getParent().getAggregation("content")[0].getAggregation("content")[0].getAggregation("content")[2].getId();
 			$("#"+searchBarId).find("form").addClass("search-hover");
-			//searchBar.getContent()[2].addStyleClass("search-hover");
 		},
 		itemPress: function(oEvent){
 		},
@@ -214,7 +214,6 @@ incture.bpmInbox.customComponent.Component.prototype.createContent= function(){
     	}
 	});
 	
-	//panel.addContent(searchBar);
 	panel.addContent(this.headerToolBar);
 	panel.addContent(this.oTable);
 	
@@ -636,7 +635,6 @@ incture.bpmInbox.customComponent.Component.prototype.getFilterButtons = function
 //						  }else{
 //							  for(var i=0;i<filters.length;i++){
 //								  if(filters[i].sPath=== "Status"){
-//									  debugger;
 //									  filters[i]= new sap.ui.model.Filter("Priority","EQ","MEDIUM");
 //								  }
 //							  }
@@ -1128,7 +1126,53 @@ incture.bpmInbox.customComponent.Component.prototype.open = function(oEvent, isL
 	var urlModel= this.makeAjaxGetCall(url);
 	
 	var link= urlModel.getData().d.GUI_Link;
-	window.open(link,"_self",null,false);
+	
+	/*** IFrame renderer ***/
+	var height= $(window).height();
+	var iFrame="<iframe src='"+link+"' width='100%' height='"+height+"px'></iframe>";
+
+	var iFrameForTask= new sap.ui.core.HTML({
+		id : "iFrameID",
+		content: iFrame,
+		afterRendering : [ function(oEvent) {
+			var control = oEvent.getSource();
+		}, this ]
+	});
+	
+	var that=this;
+	var iFrameHeader= new sap.m.Bar({
+		id : "iFrameHeaderID", 
+		contentLeft : [new sap.ui.core.Icon({
+			src : "sap-icon://nav-back", 
+			size : "1.2em", 
+			color : "#902278",
+			hoverColor : "#d345b5",
+			height : "30px", 
+			backgroundColor : undefined,
+			hoverBackgroundColor : undefined,
+			press : [ function(oEvent) {
+				var control = oEvent.getSource();
+				sap.ui.getCore().byId("iFrameHeaderID").destroy();
+				sap.ui.getCore().byId("iFrameID").destroy();
+				
+				that.oTable.setVisible(true);
+				that.headerToolBar.setVisible(true);
+				
+				that.refreshTable();
+			}, this ]
+	       })], 
+		contentMiddle : [],
+		contentRight : [],
+	}).addStyleClass("whiteBG");
+	
+	sap.ui.getCore().byId("panelID").addContent(iFrameHeader);
+	sap.ui.getCore().byId("panelID").addContent(iFrameForTask);
+	
+	
+	this.oTable.setVisible(false);
+	this.headerToolBar.setVisible(false);
+	
+	//window.open(link,"_self",null,false);
 };
 
 incture.bpmInbox.customComponent.Component.prototype.release = function(oEvent){
